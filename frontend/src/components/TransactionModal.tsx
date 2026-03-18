@@ -7,7 +7,7 @@ import { IntentResponse } from '@/lib/api';
 
 interface TransactionModalProps {
     isOpen: boolean;
-    intent: IntentResponse | null;
+    intent: IntentResponse['data'] | null;
     onClose: () => void;
     onConfirm: () => void;
     isProcessing: boolean;
@@ -68,14 +68,36 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
                                         <div className="flex justify-between items-end mb-4">
                                             <div>
                                                 <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Action</p>
-                                                <p className="text-xl font-medium text-white capitalize">{intent.action}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-xl font-medium text-white capitalize">{intent.action}</p>
+                                                    {intent.chain && (
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider bg-white/10 text-gray-300 px-2 py-0.5 rounded-full border border-white/5">
+                                                            {intent.chain}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Asset</p>
-                                                <div className="flex items-baseline gap-1 justify-end">
-                                                    <span className="text-3xl font-bold text-violet-300 tracking-tight">{intent.amount}</span>
-                                                    <span className="text-sm font-bold text-gray-400">{intent.asset}</span>
-                                                </div>
+                                                {intent.action === 'swap' ? (
+                                                    <div className="flex flex-col items-end">
+                                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Swap</p>
+                                                        <div className="flex items-baseline gap-1 justify-end">
+                                                            <span className="text-lg font-bold text-violet-300 tracking-tight">{intent.amount}</span>
+                                                            <span className="text-sm font-bold text-gray-400">{intent.from_asset}</span>
+                                                            <span className="text-gray-500 mx-1">→</span>
+                                                            <span className="text-lg font-bold text-emerald-400 tracking-tight">~{intent.estimated_output}</span>
+                                                            <span className="text-sm font-bold text-gray-400">{intent.to_asset}</span>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div>
+                                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Asset</p>
+                                                        <div className="flex items-baseline gap-1 justify-end">
+                                                            <span className="text-3xl font-bold text-violet-300 tracking-tight">{intent.amount}</span>
+                                                            <span className="text-sm font-bold text-gray-400">{intent.asset}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
@@ -92,14 +114,18 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
                                         </div>
                                     </div>
 
-                                    {/* Recipient Details */}
+                                    {/* Recipient / Router Details */}
                                     <div className="space-y-2">
                                         <div className="flex justify-between items-center px-1">
-                                            <label className="text-gray-500 text-xs font-bold uppercase tracking-widest">Recipient Address</label>
-                                            <span className="text-xs text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/20">External Wallet</span>
+                                            <label className="text-gray-500 text-xs font-bold uppercase tracking-widest">
+                                                {intent.action === 'swap' ? 'Swap Router' : 'Recipient Address'}
+                                            </label>
+                                            <span className="text-xs text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/20">
+                                                {intent.action === 'swap' ? 'DEX Proxy' : 'External Wallet'}
+                                            </span>
                                         </div>
                                         <div className="bg-black/50 p-4 rounded-xl font-mono text-sm text-gray-300 break-all border border-white/10 flex items-center justify-between gap-4 group hover:border-violet-500/30 transition-colors">
-                                            <span>{intent.to_address}</span>
+                                            <span>{intent.action === 'swap' ? intent.routerAddress : intent.to_address}</span>
                                         </div>
                                     </div>
 
