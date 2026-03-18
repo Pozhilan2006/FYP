@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const intentRoutes = require('./routes/intentRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();
@@ -12,7 +11,6 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/intent', intentRoutes);
 app.use('/api/chat', chatRoutes);
 
 // Health check
