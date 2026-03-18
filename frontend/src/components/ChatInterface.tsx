@@ -136,7 +136,7 @@ export default function ChatInterface() {
                 tx = {
                     to: currentIntentData.routerAddress,
                     data: currentIntentData.txData,
-                    value: currentIntentData.from_asset === 'ETH' ? ethers.parseEther(currentIntentData.amount || '0') : 0n,
+                    value: currentIntentData.from_asset === 'ETH' ? ethers.parseEther(currentIntentData.amount || '0') : BigInt(0),
                 };
             } else if (currentIntentData.action === 'transfer' && currentIntentData.tokenAddress) {
                 // Mock ERC20 Transfer
@@ -144,7 +144,7 @@ export default function ChatInterface() {
                 tx = {
                     to: currentIntentData.tokenAddress,
                     data: erc20Interface.encodeFunctionData("transfer", [currentIntentData.to_address, ethers.parseUnits(currentIntentData.amount || '0', 18)]),
-                    value: 0n,
+                    value: BigInt(0),
                 };
             } else {
                 // Standard Native Transfer
